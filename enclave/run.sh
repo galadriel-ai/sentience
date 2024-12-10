@@ -22,4 +22,4 @@ python3.10 /app/traffic_forwarder.py 127.0.0.1 443 &
 # python3.10 /app/check_proxies.py
 
 # Start the server
-python3.10 /app/server.py &
+python3.10 /app/api.py &
