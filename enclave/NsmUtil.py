@@ -11,29 +11,12 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Signature import pkcs1_15
 from Crypto.Hash import SHA256
 
-import key_manager
 
 print("importing libnsm")
 import libnsm
 
 
-@dataclass(frozen=True)
-class AliasInfo:
-    alias: str
-    address: str
-    public_key: str
-
-
-def get_alias_info() -> Optional[AliasInfo]:
-    account = key_manager.get_account()
-    return AliasInfo(
-        alias="Oracle",
-        address=account.address,
-        public_key=account.address
-    )
-
-
-class NSMUtil():
+class NSMUtil:
     """NSM util class."""
 
     def __init__(self):
@@ -44,7 +27,8 @@ class NSMUtil():
         # utilizes the NSM module.
         self.nsm_rand_func = lambda num_bytes: libnsm.nsm_get_random(
             # pylint:disable=c-extension-no-member
-            self._nsm_fd, num_bytes
+            self._nsm_fd,
+            num_bytes,
         )
 
         # Force pycryptodome to use the new rand function.
@@ -63,14 +47,10 @@ class NSMUtil():
 
     def get_attestation_doc(self):
         """Get the attestation document from /dev/nsm."""
-        account = key_manager.get_account()
-        b_public_key = bytes.fromhex(account.address[2:])
 
         libnsm_att_doc_cose_signed = libnsm.nsm_get_attestation_doc(
             # pylint:disable=c-extension-no-member
             self._nsm_fd,
-            b_public_key,
-            len(b_public_key)
         )
         return libnsm_att_doc_cose_signed
 
@@ -84,14 +64,6 @@ class NSMUtil():
         plaintext = cipher.decrypt(ciphertext)
 
         return plaintext.decode()
-
-    def sign_message(self, message: str):
-        message = str.encode(message)
-        hash_obj = SHA256.new(message)
-        # TODO: is this needed?
-        signature = pkcs1_15.new(self._rsa_key).sign(hash_obj)
-        signature_b64 = base64.b64encode(signature).decode()
-        return signature_b64
 
     @classmethod
     def _monkey_patch_crypto(cls, nsm_rand_func):
