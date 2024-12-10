@@ -9,8 +9,9 @@ pub mod solana_attestation_contract {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        let authority_data = &mut ctx.accounts.authority_data;
 
-        ctx.accounts.authority_data.authority = *ctx.accounts.authority.key;
+        authority_data.authority = ctx.accounts.authority.key();
 
         Ok(())
     }
