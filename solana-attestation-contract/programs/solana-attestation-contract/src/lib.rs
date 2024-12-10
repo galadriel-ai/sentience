@@ -9,9 +9,8 @@ pub mod solana_attestation_contract {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        let authority_data = &mut ctx.accounts.authority_data;
 
-        authority_data.authority = ctx.accounts.authority.key();
+        ctx.accounts.authority_data.authority = *ctx.accounts.authority.key;
 
         Ok(())
     }
@@ -22,7 +21,7 @@ pub mod solana_attestation_contract {
     ) -> Result<()> {
         let authority_data = &ctx.accounts.authority_data;
 
-        require!(authority_data.authority != ctx.accounts.authority.key(), Errors::UnauthorizedSigner);
+        require!(authority_data.authority == ctx.accounts.authority.key(), Errors::UnauthorizedSigner);
 
         let attestation_record = &mut ctx.accounts.attestation_record;
 
