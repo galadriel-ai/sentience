@@ -123,7 +123,6 @@ describe("solana-attestation-contract", () => {
       assert(false, "should've failed here but didn't ");
     } catch (err) {
       expect(err).to.be.instanceOf(SendTransactionError);
-      console.log(err);
     }
   });
 });
