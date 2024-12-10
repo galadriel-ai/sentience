@@ -1,0 +1,2 @@
+allowlist:
+  - { address: api.openai.com, port: 443 }
