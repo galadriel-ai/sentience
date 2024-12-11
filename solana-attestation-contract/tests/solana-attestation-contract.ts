@@ -38,30 +38,45 @@ describe("solana-attestation-contract", () => {
     const tx = await program.methods
       .initialize()
       .accounts({
-        authority: payer.publicKey,
+        signer: payer.publicKey,
       })
       .signers([payer])
       .rpc();
     // Check the authority data
     const data = await program.account.authorityData.fetch(authorityData);
-    assert.ok(data.authority.equals(payer.publicKey));
+    assert.ok(data.admin.equals(payer.publicKey));
   });
 
-  const [attestationRecord] = PublicKey.findProgramAddressSync(
+  it("Reinitialize failed", async () => {
+    try {
+      const tx = await program.methods
+        .initialize()
+        .accounts({
+          signer: randomUser.publicKey,
+        })
+        .signers([randomUser])
+        .rpc();
+      assert(false, "should've failed here but didn't ");
+    } catch (err) {
+      expect(err).to.be.instanceOf(SendTransactionError);
+    }
+  });
+
+  const [proofRecord] = PublicKey.findProgramAddressSync(
     [Buffer.from("attestation"), Buffer.from(zeroArrays32)],
     program.programId
   );
 
-  it("Add attestation successfully", async () => {
+  it("Add proof successfully", async () => {
     const tx = await program.methods
-      .addAttestation({
+      .addProof({
         hashedData: zeroArrays32,
         signature: zeroArrays64,
         publicKey: zeroArrays32,
         attestation: zeroArrays32,
       })
       .accountsStrict({
-        attestationRecord: attestationRecord,
+        proofRecord: proofRecord,
         authority: payer.publicKey,
         authorityData: authorityData,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -69,10 +84,8 @@ describe("solana-attestation-contract", () => {
       .signers([payer])
       .rpc();
 
-    // Check the attestation record
-    const data = await program.account.attestationRecord.fetch(
-      attestationRecord
-    );
+    // Check the proof record
+    const data = await program.account.proofRecord.fetch(proofRecord);
     expect(data.hashedData).to.eql(zeroArrays32);
     expect(data.signature).to.eql(zeroArrays64);
     expect(data.publicKey).to.eql(zeroArrays32);
@@ -80,22 +93,22 @@ describe("solana-attestation-contract", () => {
   });
 
   const newHashedData = new Array(32).fill(1);
-  const [newAttestationData] = PublicKey.findProgramAddressSync(
+  const [newProofData] = PublicKey.findProgramAddressSync(
     [Buffer.from("attestation"), Buffer.from(newHashedData)],
     program.programId
   );
 
-  it("Add attestation failed", async () => {
+  it("Add proof failed", async () => {
     try {
       const tx = await program.methods
-        .addAttestation({
+        .addProof({
           hashedData: newHashedData,
           signature: zeroArrays64,
           publicKey: zeroArrays32,
           attestation: zeroArrays32,
         })
         .accountsStrict({
-          attestationRecord: newAttestationData,
+          proofRecord: newProofData,
           authority: randomUser.publicKey,
           authorityData: authorityData,
           systemProgram: anchor.web3.SystemProgram.programId,
@@ -111,20 +124,146 @@ describe("solana-attestation-contract", () => {
     }
   });
 
-  it("Reinitialize failed", async () => {
+  it("Add authority successfully", async () => {
+    const tx = await program.methods
+      .addAuthority()
+      .accounts({
+        signer: payer.publicKey,
+        newAuthority: randomUser.publicKey,
+      })
+      .signers([payer])
+      .rpc();
+
+    // Check the authority data
+    const data = await program.account.authorityData.fetch(authorityData);
+    assert.ok(data.admin.equals(payer.publicKey));
+    assert.ok(data.authorities[0].equals(randomUser.publicKey));
+  });
+
+  it("Add authority failed - unauthorized signer", async () => {
     try {
       const tx = await program.methods
-        .initialize()
+        .addAuthority()
         .accounts({
+          signer: randomUser.publicKey,
+          newAuthority: randomUser.publicKey,
+        })
+        .signers([randomUser])
+        .rpc();
+      assert(false, "should've failed here but didn't ");
+    } catch (err) {
+      expect(err).to.be.instanceOf(AnchorError);
+      expect((err as AnchorError).error.errorCode.code).to.equal(
+        "UnauthorizedSigner"
+      );
+    }
+  });
+
+  it("Add authority failed - authority already exists", async () => {
+    try {
+      const tx = await program.methods
+        .addAuthority()
+        .accounts({
+          signer: payer.publicKey,
+          newAuthority: randomUser.publicKey,
+        })
+        .signers([payer])
+        .rpc();
+      assert(false, "should've failed here but didn't ");
+    } catch (err) {
+      expect(err).to.be.instanceOf(AnchorError);
+      expect((err as AnchorError).error.errorCode.code).to.equal(
+        "AuthorityAlreadyExists"
+      );
+    }
+  });
+
+  it("Add authority failed - authority limit reached", async () => {
+    // Add 9 more authorities
+    for (let i = 0; i < 9; i++) {
+      const newAuthority = Keypair.generate();
+      const tx = await program.methods
+        .addAuthority()
+        .accounts({
+          signer: payer.publicKey,
+          newAuthority: newAuthority.publicKey,
+        })
+        .signers([payer])
+        .rpc();
+    }
+    try {
+      const tx = await program.methods
+        .addAuthority()
+        .accounts({
+          signer: payer.publicKey,
+          newAuthority: Keypair.generate().publicKey,
+        })
+        .signers([payer])
+        .rpc();
+      assert(false, "should've failed here but didn't ");
+    } catch (err) {
+      expect(err).to.be.instanceOf(AnchorError);
+      expect((err as AnchorError).error.errorCode.code).to.equal(
+        "MaxAuthoritiesReached"
+      );
+    }
+  });
+
+  it("Remove authority successfully", async () => {
+    const tx = await program.methods
+      .removeAuthority()
+      .accounts({
+        signer: payer.publicKey,
+        authority: randomUser.publicKey,
+      })
+      .signers([payer])
+      .rpc();
+
+    // Check the authority data
+    const data = await program.account.authorityData.fetch(authorityData);
+    assert.ok(data.admin.equals(payer.publicKey));
+    assert.ok(!data.authorities.includes(randomUser.publicKey));
+    assert.ok(data.authorities.length === 9);
+  });
+
+  it("Remove authority failed - unauthorized signer", async () => {
+    try {
+      const tx = await program.methods
+        .removeAuthority()
+        .accounts({
+          signer: randomUser.publicKey,
           authority: randomUser.publicKey,
         })
         .signers([randomUser])
         .rpc();
       assert(false, "should've failed here but didn't ");
     } catch (err) {
-      expect(err).to.be.instanceOf(SendTransactionError);
+      expect(err).to.be.instanceOf(AnchorError);
+      expect((err as AnchorError).error.errorCode.code).to.equal(
+        "UnauthorizedSigner"
+      );
     }
   });
+
+  it("Remove authority failed - authority not found", async () => {
+    try {
+      const tx = await program.methods
+        .removeAuthority()
+        .accounts({
+          signer: payer.publicKey,
+          authority: randomUser.publicKey,
+        })
+        .signers([payer])
+        .rpc();
+      assert(false, "should've failed here but didn't ");
+    } catch (err) {
+      expect(err).to.be.instanceOf(AnchorError);
+      expect((err as AnchorError).error.errorCode.code).to.equal(
+        "AuthorityNotFound"
+      );
+    }
+  });
+
 });
 
 
