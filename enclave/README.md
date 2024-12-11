@@ -24,14 +24,12 @@ sudo reboot
 ```shell
 sudo systemctl start nitro-enclaves-allocator.service \
   && sudo systemctl enable nitro-enclaves-allocator.service
-  
+
 ```
 
 # Running
 
-Make sure that submodules have been updated:
-
 ```
-git submodule update --init --recursive
-git submodule update --remote --merge
+./run_proxies.sh
+./run_enclave.sh
 ```

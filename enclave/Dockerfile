@@ -23,19 +23,10 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN python3.10 -m pip install -r /app/requirements.txt
 
-COPY server.py ./
-COPY NsmUtil.py ./
+COPY api /app/api/
 COPY run.sh ./
-COPY libnsm.so ./
 COPY traffic_forwarder.py ./
-COPY settings.py ./
 COPY guess_encoding.py ./
-
-# TODO: debug only
-COPY proxy_checks ./proxy_checks/
-COPY check_proxies.py ./
-
-COPY dnsmasq.conf /etc/dnsmasq.conf
 
 RUN chmod +x run.sh
 

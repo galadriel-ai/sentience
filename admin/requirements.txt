@@ -1,6 +1,0 @@
-cbor2==5.2.0
-cose==0.9.dev2
-cryptography==42.0.4
-pycryptodome==3.19.1
-pyOpenSSL==24.0.0
-python-dotenv==1.0.1

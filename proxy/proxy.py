@@ -5,7 +5,7 @@ import subprocess
 
 BUFFER_SIZE = 4096
 HOST = "127.0.0.1"
-PORT = 8080
+PORT = 5000
 VSOCK_PORT = 5000
 
 

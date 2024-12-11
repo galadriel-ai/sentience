@@ -4,3 +4,4 @@ build
 **/.env
 enclave/.DS_Store
 .DS_Store
+*.key
