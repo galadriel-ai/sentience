@@ -247,9 +247,17 @@ class ChatCompletionRequest(BaseModel):
             )
             return cast(completion_create_params.CompletionCreateParams, result)
         except Exception as e:
-            logger.warning("Failed to convert input to openAI CompletionCreateParams")
+            print("Failed to convert input to openAI CompletionCreateParams")
             raise e
 
 
 class ChatCompletion(OpenAiChatCompletion):
-    pass
+    hash: str = Field(
+        description="The SHA-256 hash of the request and response",
+    )
+    signature: str = Field(
+        description="The signature of the hash, signed by the Solana account.",
+    )
+    attestation: str = Field(
+        description="The attestation document.",
+    )
