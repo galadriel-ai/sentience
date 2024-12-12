@@ -5,9 +5,10 @@ import uvicorn
 
 def main(debug: bool):
     if debug:
-        # Bind to localhost:5000
-        print("Starting Uvicorn on localhost:5000 (debug mode)...")
-        uvicorn.run("app:app", host="127.0.0.1", port=5000)
+        port: int = 5001
+        # Bind to localhost:port
+        print(f"Starting Uvicorn on localhost:{port} (debug mode)...")
+        uvicorn.run("app:app", host="127.0.0.1", port=port)
     else:
         print("Starting Uvicorn on VSOCK...")
         try:

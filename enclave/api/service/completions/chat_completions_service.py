@@ -43,8 +43,9 @@ async def execute(
 async def _hash_request_and_response(
     request: Request, response: ChatCompletion
 ) -> bytes:
-    request_body = await request.body()
-    combined_str = f"{request_body}{json.dumps(response.dict(), sort_keys=True)}"
+    request_body = await request.json()
+    cleaned_request_body = {k: v for k, v in request_body.items() if v is not None}
+    combined_str = f"{json.dumps(cleaned_request_body)}{json.dumps(response.dict(), sort_keys=True)}"
     return hashlib.sha256(combined_str.encode("utf-8")).digest()
 
 
