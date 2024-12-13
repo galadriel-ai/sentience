@@ -1,7 +1,7 @@
+-r ../requirements.txt
+
 argparse==1.4.0
 fastapi==0.115.6
 openai==1.57.2
 solders==0.21.0
 uvicorn==0.32.1
-mypy==1.11.2
-pylint==3.2.7
