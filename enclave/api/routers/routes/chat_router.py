@@ -15,6 +15,7 @@ TAG = "Chat"
 router = APIRouter(prefix="/chat")
 router.tags = [TAG]
 
+auth_key_regex = re.compile(r"Bearer\s+(.+)")
 
 @router.post(
     "/completions",
@@ -36,7 +37,7 @@ async def completions(
 
 
 def extract_auth_key(authorization: str) -> str:
-    match = re.match(r"Bearer\s+(.+)", authorization)
+    match = auth_key_regex.match(authorization)
     if match:
         return match.group(1)
     else:
