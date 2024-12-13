@@ -6,6 +6,8 @@ import openai
 from openai.types.chat.chat_completion import ChatCompletion as OpenAIChatCompletion
 from fastapi import HTTPException
 from fastapi import Request
+
+# pylint: disable=import-error
 from solders.keypair import Keypair
 
 from nsm_util import NSMUtil
@@ -51,6 +53,5 @@ async def _hash_request_and_response(
 
 
 def _generate_attestation_document(solana_account: Keypair) -> str:
-    nsm_util
     attestation_doc = nsm_util.get_attestation_doc(bytes(solana_account.pubkey()))
     return base64.b64encode(attestation_doc).decode()

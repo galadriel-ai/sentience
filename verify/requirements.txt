@@ -1,3 +1,5 @@
+-r ../requirements.txt
+
 cbor2==5.2.0
 cose==0.9.dev2
 cryptography==42.0.4

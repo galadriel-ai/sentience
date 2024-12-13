@@ -1,3 +1,5 @@
+-r ../requirements.txt
+
 argparse==1.4.0
 fastapi==0.115.6
 openai==1.57.2

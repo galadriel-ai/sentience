@@ -17,6 +17,7 @@ router.tags = [TAG]
 
 auth_key_regex = re.compile(r"Bearer\s+(.+)")
 
+
 @router.post(
     "/completions",
     summary="Creates a model response for the given chat conversation.",
@@ -40,7 +41,4 @@ def extract_auth_key(authorization: str) -> str:
     match = auth_key_regex.match(authorization)
     if match:
         return match.group(1)
-    else:
-        raise HTTPException(
-            status_code=401, detail="Invalid Authorization header format"
-        )
+    raise HTTPException(status_code=401, detail="Invalid Authorization header format")
