@@ -30,7 +30,8 @@ async def execute(
         response = ChatCompletion(
             **openai_response.dict(),
             hash=hash_value.hex(),
-            signature=str(solana_account.sign_message(hash_value)),
+            public_key=str(solana_account.pubkey()),
+            signature=bytes(solana_account.sign_message(hash_value)).hex(),
             attestation=_generate_attestation_document(solana_account),
         )
         return response
