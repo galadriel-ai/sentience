@@ -1,3 +1,5 @@
+import re
+
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Header
@@ -13,6 +15,7 @@ TAG = "Chat"
 router = APIRouter(prefix="/chat")
 router.tags = [TAG]
 
+auth_key_regex = re.compile(r"Bearer\s+(.+)")
 
 @router.post(
     "/completions",
@@ -27,12 +30,17 @@ async def completions(
     solana_account=Depends(dependencies.get_solana_account),
     authorization: str = Header(...),
 ):
-    if not authorization.startswith("Bearer "):
+    auth_key = extract_auth_key(authorization)
+    return await chat_completions_service.execute(
+        auth_key, request, api_request, solana_account
+    )
+
+
+def extract_auth_key(authorization: str) -> str:
+    match = auth_key_regex.match(authorization)
+    if match:
+        return match.group(1)
+    else:
         raise HTTPException(
             status_code=401, detail="Invalid Authorization header format"
         )
-
-    api_key = authorization.split(" ", 1)[1]
-    return await chat_completions_service.execute(
-        api_key, request, api_request, solana_account
-    )

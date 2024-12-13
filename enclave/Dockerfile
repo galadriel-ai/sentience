@@ -26,7 +26,6 @@ RUN python3.10 -m pip install -r /app/requirements.txt
 COPY api /app/api/
 COPY run.sh ./
 COPY traffic_forwarder.py ./
-COPY guess_encoding.py ./
 
 RUN chmod +x run.sh
 
