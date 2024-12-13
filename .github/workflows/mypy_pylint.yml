@@ -48,7 +48,7 @@ jobs:
         run: |
           enclave_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_enclave.txt | sed 's/ errors//g' || echo 0)
           proxy_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_proxy.txt | sed 's/ errors//g' || echo 0)
-          error_count = $((enclave_error_count + verify_error_count + proxy_error_count))
+          error_count=$((enclave_error_count + verify_error_count + proxy_error_count))
           echo "Mypy error count: $error_count"
           if [[ "$error_count" -gt 0 ]]; then
             echo "::error::Found $error_count mypy errors."
