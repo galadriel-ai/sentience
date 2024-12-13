@@ -29,8 +29,3 @@ def _save_private_key(account: Keypair):
     private_key = bytes(account)
     with open(KEY_FILE, "wb") as file:
         file.write(private_key)
-
-
-def sign_message(account: Keypair, hash_value: bytes) -> bytes:
-    """Sign a hash using the account's private key."""
-    return account.sign_message(hash_value)
