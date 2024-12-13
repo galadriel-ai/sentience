@@ -3,6 +3,7 @@ import hashlib
 import json
 
 import openai
+from openai.types.chat.chat_completion import ChatCompletion as OpenAIChatCompletion
 from fastapi import HTTPException
 from fastapi import Request
 from solders.keypair import Keypair
@@ -42,7 +43,7 @@ async def execute(
 
 
 async def _hash_request_and_response(
-    request: Request, response: ChatCompletion
+    request: Request, response: OpenAIChatCompletion
 ) -> bytes:
     request_body = await request.json()
     combined_str = f"{json.dumps(request_body, sort_keys=True)}{json.dumps(response.dict(), sort_keys=True)}"
