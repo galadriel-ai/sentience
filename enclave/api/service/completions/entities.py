@@ -255,9 +255,7 @@ class ChatCompletion(OpenAiChatCompletion):
     hash: str = Field(
         description="The SHA-256 hash of the request and response",
     )
-    public_key: str = Field(
-        description="Signer public key"
-    )
+    public_key: str = Field(description="Signer public key")
     signature: str = Field(
         description="The signature of the hash, signed by the Solana account in hex format.",
     )
