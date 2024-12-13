@@ -17,6 +17,7 @@ router.tags = [TAG]
 
 auth_key_regex = re.compile(r"Bearer\s+(.+)")
 
+
 @router.post(
     "/completions",
     summary="Creates a model response for the given chat conversation.",
