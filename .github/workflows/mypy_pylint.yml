@@ -1,0 +1,89 @@
+name: Lint MyPy, Pyright & Pylint
+
+on:
+  pull_request:
+
+jobs:
+  lint-and-type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            !~/.cache/pip/log
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+      - name: Install Python Dependencies
+        run: |
+          pip install -r enclave/requirements.txt
+          pip install -r verify/requirements.txt
+          pip install -r proxy/requirements.txt
+          pip install mypy pyright
+      - name: Run PyLint
+        run: |
+          pylint --rcfile=setup.cfg enclave/*
+          pylint --rcfile=setup.cfg verify/*
+          pylint --rcfile=setup.cfg proxy/*
+
+      - name: Create output directory
+        run: mkdir -p mypy_pyright_outputs
+      - name: Run mypy and save output
+        run: |
+          mypy enclave/ > mypy_pyright_outputs/mypy_output_enclave.txt || true
+          mypy verify/ > mypy_pyright_outputs/mypy_output_verify.txt || true
+          mypy proxy/ > mypy_pyright_outputs/mypy_output_proxy.txt || true
+        continue-on-error: true
+      - name: Print mypy output
+        run: |
+          echo "=== mypy output ==="
+          cat mypy_pyright_outputs/mypy_output_enclave.txt
+          cat mypy_pyright_outputs/mypy_output_verify.txt
+          cat mypy_pyright_outputs/mypy_output_proxy.txt
+      - name: Count mypy errors
+        id: mypy-count
+        run: |
+          enclave_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_enclave.txt | sed 's/ errors//g' || echo 0)
+          verify_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_verify.txt | sed 's/ errors//g' || echo 0)
+          proxy_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_proxy.txt | sed 's/ errors//g' || echo 0)
+          error_count = $((enclave_error_count + verify_error_count + proxy_error_count))
+          echo "Mypy error count: $error_count"
+          if [[ "$error_count" -gt 0 ]]; then
+            echo "::error::Found $error_count mypy errors."
+            exit 1
+          fi
+      - name: Run pyright and save output
+        run: |
+          pyright enclave/ > mypy_pyright_outputs/pyright_enclave_output.txt || true
+          pyright verify/ > mypy_pyright_outputs/pyright_verify_output.txt || true
+          pyright proxy/ > mypy_pyright_outputs/pyright_proxy_output.txt || true
+        continue-on-error: true
+      - name: Print pyright output
+        run: |
+          echo "=== pyright output ==="
+          cat mypy_pyright_outputs/pyright_enclave_output.txt
+          cat mypy_pyright_outputs/pyright_verify_output.txt
+          cat mypy_pyright_outputs/pyright_proxy_output.txt
+      - name: Count pyright errors
+        id: pyright-count
+        run: |
+          enclave_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/pyright_enclave_output.txt | sed 's/ errors//g' || echo 0)
+          verify_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/pyright_verify_output.txt | sed 's/ errors//g' || echo 0)
+          proxy_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_proxy.txt | sed 's/ errors//g' || echo 0)
+          error_count = $((enclave_error_count + verify_error_count + proxy_error_count))
+          echo "pyright error count: $error_count"
+          if [[ "$error_count" -gt 0 ]]; then
+            echo "::warning::Found $error_count pyright errors."
+          fi
+      - name: Upload mypy and pyright outputs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mypy-pyright-outputs
+          path: mypy_pyright_outputs/
