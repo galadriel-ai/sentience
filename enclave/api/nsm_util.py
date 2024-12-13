@@ -2,8 +2,6 @@
 This file is modified based on donkersgoed's repository (https://github.com/donkersgoed/nitropepper-enclave-app)
 """
 
-from dataclasses import dataclass
-
 try:
     import libnsm
 except ImportError:

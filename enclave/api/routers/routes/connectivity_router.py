@@ -1,10 +1,5 @@
 from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import Header
-from fastapi import HTTPException
-from fastapi import Request
 
-import dependencies
 from service.connectivity.entities import CheckConnectivityResponse
 from service.connectivity import check_connectivity_service
 

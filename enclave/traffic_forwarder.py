@@ -60,8 +60,6 @@ def server(local_ip, local_port):
         new_thread = threading.Thread(target=server, args=(local_ip, local_port))
         new_thread.start()
 
-    return
-
 
 def forward(source, destination, first_string: Optional[bytes] = None):
     if first_string:
