@@ -2,7 +2,7 @@ from utils.solana_client import ContractClient
 from config import settings
 
 # pylint: disable=C0103
-solana_client = None
+solana_client: ContractClient
 
 
 # pylint: disable=W0603

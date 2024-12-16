@@ -41,7 +41,7 @@ async def execute(
         await solana_client.add_proof(
             AttestationProof(
                 hash_value,
-                bytes(signature),
+                signature,
                 solana_account.pubkey(),
                 attestation_doc_hash,
             )
