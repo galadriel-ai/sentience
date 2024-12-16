@@ -13,11 +13,26 @@ jobs:
       run:
         working-directory: ./solana-attestation-contract
     steps:
-      - uses: actions/checkout@v3
-      - uses: metadaoproject/setup-anchor@v2
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+    
+      - name: Install Anchor
+        run: |
+            sh -c "$(curl -sSfL https://release.solana.com/beta/install)"
+            echo "/home/runner/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+    
+      - name: Install Anchor CLI
+        run: cargo install --git https://github.com/coral-xyz/anchor --tag v0.30.1 anchor-cli
+    
+      - name: Install Node
+        uses: actions/setup-node@v3
         with:
-            anchor-version: '0.30.1' 
-            solana-cli-version: '2.0.19'
-            node-version: '23.3.0'
+          node-version: '23'
+    
+      - name: Install yarn
+        run: npm install -g yarn
+
       - run: anchor build
       - run: anchor test
