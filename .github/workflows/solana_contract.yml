@@ -1,14 +1,17 @@
 name: Solana Contract Build and Test
 on: 
-    push:
-        paths:
-            - 'solana-attestation-contract/**'
-    pull_request:
-        paths:
-            - 'solana-attestation-contract/**'
+  push:
+    paths:
+      - 'solana-attestation-contract/**'
+  pull_request:
+    paths:
+      - 'solana-attestation-contract/**'
 jobs:
   run-anchor-build:
     runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: solana-attestation-contract
     steps:
       - uses: actions/checkout@v3
       - uses: metadaoproject/setup-anchor@v2
