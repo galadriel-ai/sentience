@@ -13,21 +13,22 @@ ATTESTATION_DOC_B64_PATH = "attestation_doc_b64.txt"
 RPC_URL = "https://devnet.galadriel.com"
 web3_client = Web3(Web3.HTTPProvider(RPC_URL))
 
+
 def _get_oracle_address(tx_hash: str) -> str:
     try:
         tx = web3_client.eth.get_transaction(tx_hash)
         return tx.to
     except:
-        raise Exception("Cannot read address from tx hash, make sure correct hash is passed in - tx made by the oracle")
+        raise Exception(
+            "Cannot read address from tx hash, make sure correct hash is passed in - tx made by the oracle"
+        )
 
 
 def _read_onchain_attestation(oracle_address: str) -> Tuple[str, str]:
     with open("oracle_abi.json", "r", encoding="utf-8") as f:
         oracle_abi = json.loads(f.read())
 
-    contract = web3_client.eth.contract(
-        address=oracle_address, abi=oracle_abi
-    )
+    contract = web3_client.eth.contract(address=oracle_address, abi=oracle_abi)
     try:
         pcr0_hash_owner = contract.functions.latestPcr0HashOwner().call()
         pcr0_hash = contract.functions.pcr0Hashes(pcr0_hash_owner).call()
@@ -36,7 +37,8 @@ def _read_onchain_attestation(oracle_address: str) -> Tuple[str, str]:
         attestation = contract.functions.attestations(attestation_owner).call()
     except:
         raise Exception(
-            "Cannot read on-chain attestation, make sure correct transaction hash or oracle address is passed")
+            "Cannot read on-chain attestation, make sure correct transaction hash or oracle address is passed"
+        )
     return pcr0_hash, attestation
 
 
@@ -46,7 +48,7 @@ def _read_attestation_doc():
 
 
 def get_root_pem():
-    with open('root.pem', 'r', encoding="utf-8") as file:
+    with open("root.pem", "r", encoding="utf-8") as file:
         return file.read()
 
 
@@ -75,9 +77,7 @@ def main(
 
     try:
         attestation_verifier.verify_attestation_doc(
-            attestation_doc=attestation_doc,
-            pcrs=[pcr0],
-            root_cert_pem=root_cert_pem
+            attestation_doc=attestation_doc, pcrs=[pcr0], root_cert_pem=root_cert_pem
         )
         print("Attestation verification succeeded!")
     except Exception as e:
@@ -92,10 +92,8 @@ def main(
     print("\npublic key saved to enclave_public_key.txt")
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description="Verify pcr0 hash and attestation doc"
-    )
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Verify pcr0 hash and attestation doc")
 
     parser.add_argument("--pcr0_hash")
     parser.add_argument("--oracle_address")
@@ -106,6 +104,7 @@ if __name__ == '__main__':
     tx_hash = args.tx_hash
     if not pcr0_hash and not oracle_address and not tx_hash:
         raise Exception(
-            "No arguments passed, pass either --pcr0_hash <hash>, --oracle_address <oracle contract address> or --tx_hash <tx made by oracle>")
+            "No arguments passed, pass either --pcr0_hash <hash>, --oracle_address <oracle contract address> or --tx_hash <tx made by oracle>"
+        )
 
     main(pcr0_hash, oracle_address, tx_hash)

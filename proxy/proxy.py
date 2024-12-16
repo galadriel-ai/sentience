@@ -4,7 +4,7 @@ import json
 import subprocess
 
 BUFFER_SIZE = 4096
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 PORT = 5000
 VSOCK_PORT = 5000
 
@@ -13,12 +13,12 @@ def _get_cid():
     """
     Determine CID of Current Enclave
     """
-    proc = subprocess.Popen(
+    with subprocess.Popen(
         ["/bin/nitro-cli", "describe-enclaves"], stdout=subprocess.PIPE
-    )
-    output = json.loads(proc.communicate()[0].decode())
-    enclave_cid = output[0]["EnclaveCID"]
-    return enclave_cid
+    ) as proc:
+        output = json.loads(proc.communicate()[0].decode())
+        enclave_cid = output[0]["EnclaveCID"]
+        return enclave_cid
 
 
 def forward_data(src_socket, dst_socket):
@@ -72,7 +72,7 @@ def main():
 
     while True:
         # Accept a new client connection
-        client_socket, addr = server_socket.accept()
+        client_socket, _ = server_socket.accept()
         # Handle the client connection in a new thread
         threading.Thread(
             target=_handle_client,

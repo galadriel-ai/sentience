@@ -28,7 +28,7 @@ def verify_attestation_doc(attestation_doc, pcrs=[], root_cert_pem=None):
     doc_obj = cbor2.loads(doc)
 
     # Get PCRs from attestation document
-    document_pcrs_arr = doc_obj['pcrs']
+    document_pcrs_arr = doc_obj["pcrs"]
 
     # Part 1: Validating PCRs
     for index, pcr in enumerate(pcrs):
@@ -46,7 +46,7 @@ def verify_attestation_doc(attestation_doc, pcrs=[], root_cert_pem=None):
     # Part 2: Validating signature
 
     # Get signing certificate from attestation document
-    cert = crypto.load_certificate(crypto.FILETYPE_ASN1, doc_obj['certificate'])
+    cert = crypto.load_certificate(crypto.FILETYPE_ASN1, doc_obj["certificate"])
 
     # Get the key parameters from the cert public key
     cert_public_numbers = cert.get_pubkey().to_cryptography_key().public_numbers()
@@ -82,7 +82,7 @@ def verify_attestation_doc(attestation_doc, pcrs=[], root_cert_pem=None):
 
         # Get the CA bundle from attestation document and store into X509Store
         # Except the first certificate, which is the root certificate
-        for _cert_binary in doc_obj['cabundle'][1:]:
+        for _cert_binary in doc_obj["cabundle"][1:]:
             _cert = crypto.load_certificate(crypto.FILETYPE_ASN1, _cert_binary)
             store.add_cert(_cert)
 
@@ -95,7 +95,9 @@ def verify_attestation_doc(attestation_doc, pcrs=[], root_cert_pem=None):
             store_ctx.verify_certificate()
         except OpenSSL.crypto.X509StoreContextError as exc:
             if str(exc) == "certificate has expired":
-                cert = load_der_x509_certificate(doc_obj['certificate'], default_backend())
+                cert = load_der_x509_certificate(
+                    doc_obj["certificate"], default_backend()
+                )
                 _print_cert_expired_msg(cert)
             else:
                 raise exc
@@ -106,11 +108,20 @@ def _print_cert_expired_msg(cert):
     valid_from_der = cert.not_valid_before_utc
     valid_until_der = cert.not_valid_after_utc
     print(f"\nCertificate was valid from: {valid_from_der} until {valid_until_der}")
-    print("The AWS enclave attestation certification is valid only for 3 hours from issuing.")
-    print("For this reason, when verifying an attestation that is more than 3 hours old, you have to consider ")
+    print(
+        "The AWS enclave attestation certification is valid only for 3 hours from issuing."
+    )
+    print(
+        "For this reason, when verifying an attestation that is more than 3 hours old, you have to consider "
+    )
     print("that the only reason for an invalid attestation is the certificate expiry.")
-    print("The attestation document's validity does not depend on whether the certificate is expired or not,")
-    print(" as long as the certificate was valid at the time of the attestation document creation.")
+    print(
+        "The attestation document's validity does not depend on whether the certificate is expired or not,"
+    )
+    print(
+        " as long as the certificate was valid at the time of the attestation document creation."
+    )
+
 
 def encrypt(attestation_doc, plaintext):
     """
@@ -125,7 +136,7 @@ def encrypt(attestation_doc, plaintext):
     doc_obj = cbor2.loads(doc)
 
     # Get the public key from attestation document
-    public_key_byte = doc_obj['public_key']
+    public_key_byte = doc_obj["public_key"]
     public_key = RSA.import_key(public_key_byte)
 
     # Encrypt the plaintext with the public key and encode the cipher text in base64
@@ -143,19 +154,18 @@ def get_public_key(attestation_doc):
     doc_obj = cbor2.loads(doc)
 
     # Get the public key from attestation document
-    public_key_byte = doc_obj['public_key']
+    public_key_byte = doc_obj["public_key"]
     return public_key_byte
 
 
 def decode_public_key(public_key):
     try:
         public_key = serialization.load_der_public_key(
-            public_key,
-            backend=default_backend()
+            public_key, backend=default_backend()
         )
         pem = public_key.public_bytes(
             encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
         )
         return pem.decode()
     except ValueError as e:

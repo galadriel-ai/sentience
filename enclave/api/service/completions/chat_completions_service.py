@@ -3,8 +3,11 @@ import hashlib
 import json
 
 import openai
+from openai.types.chat.chat_completion import ChatCompletion as OpenAIChatCompletion
 from fastapi import HTTPException
 from fastapi import Request
+
+# pylint: disable=import-error
 from solders.keypair import Keypair
 
 from nsm_util import NSMUtil
@@ -25,8 +28,7 @@ async def execute(
 
     try:
         params = await request.to_openai_chat_completion()
-        # openai_response = await client.chat.completions.create(**params)  # type: ignore
-        openai_response = {}
+        openai_response = await client.chat.completions.create(**params)  # type: ignore
         hash_value = await _hash_request_and_response(api_request, openai_response)
 
         solana_account = solana_client.get_keypair()
@@ -42,7 +44,8 @@ async def execute(
         response = ChatCompletion(
             **openai_response.dict(),
             hash=hash_value.hex(),
-            signature=str(signature),
+            public_key=str(solana_account.pubkey()),
+            signature=bytes(signature).hex(),
             attestation=attestation_doc,
         )
         return response
@@ -53,14 +56,13 @@ async def execute(
 
 
 async def _hash_request_and_response(
-    request: Request, response: ChatCompletion
+    request: Request, response: OpenAIChatCompletion
 ) -> bytes:
     request_body = await request.json()
-    combined_str = f"{json.dumps(request_body, sort_keys=True)}{json.dumps(response, sort_keys=True)}"
+    combined_str = f"{json.dumps(request_body, sort_keys=True)}{json.dumps(response.dict(), sort_keys=True)}"
     return hashlib.sha256(combined_str.encode("utf-8")).digest()
 
 
 def _generate_attestation_document(solana_account: Keypair) -> str:
-    nsm_util
     attestation_doc = nsm_util.get_attestation_doc(bytes(solana_account.pubkey()))
     return base64.b64encode(attestation_doc).decode()

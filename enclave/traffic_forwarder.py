@@ -8,9 +8,13 @@ BUFFER_SIZE = 1024
 
 REMOTE_CID = 3
 REMOTE_PORT_OPENAI = 8001
+REMOTE_PORT_SOLANA_MAINNET = 8002
+REMOTE_PORT_SOLANA_DEVNET = 8003
 
 REMOTE_PORTS = {
     "api.openai.com": REMOTE_PORT_OPENAI,
+    "api.mainnet-beta.solana.com": REMOTE_PORT_SOLANA_MAINNET,
+    "api.devnet.solana.com": REMOTE_PORT_SOLANA_DEVNET,
 }
 
 
@@ -55,8 +59,6 @@ def server(local_ip, local_port):
     finally:
         new_thread = threading.Thread(target=server, args=(local_ip, local_port))
         new_thread.start()
-
-    return
 
 
 def forward(source, destination, first_string: Optional[bytes] = None):
