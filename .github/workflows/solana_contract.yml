@@ -11,10 +11,9 @@ jobs:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        working-directory: solana-attestation-contract
+        working-directory: ./solana-attestation-contract
     steps:
       - uses: actions/checkout@v3
       - uses: metadaoproject/setup-anchor@v2
-      - run: cd solana-attestation-contract
       - run: anchor build
       - run: anchor test
