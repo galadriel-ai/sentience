@@ -2,6 +2,8 @@ name: Lint MyPy, Pyright & Pylint
 
 on:
   pull_request:
+    paths-ignore:
+      - 'solana-attestation-contract/**'
 
 jobs:
   lint-and-type-check:

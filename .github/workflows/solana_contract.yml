@@ -1,0 +1,16 @@
+name: example-workflow
+on: 
+    push:
+        paths:
+            - 'solana-attestation-contract/**'
+    pull_request:
+        paths:
+            - 'solana-attestation-contract/**'
+jobs:
+  run-anchor-build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: metadaoproject/setup-anchor@v2
+      - run: anchor build
+      - run: anchor test

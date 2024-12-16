@@ -131,8 +131,6 @@ pub struct AddAuthority<'info> {
     pub signer: Signer<'info>,
 
     pub new_authority: SystemAccount<'info>,
-
-    pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
@@ -148,8 +146,6 @@ pub struct RemoveAuthority<'info> {
     pub signer: Signer<'info>,
 
     pub authority: SystemAccount<'info>,
-
-    pub system_program: Program<'info, System>,
 }
 
 #[account]
