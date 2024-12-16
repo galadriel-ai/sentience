@@ -22,7 +22,7 @@ async def execute(
     api_key: str,
     request: ChatCompletionRequest,
     api_request: Request,
-    solana_client: ContractClient
+    solana_client: ContractClient,
 ) -> ChatCompletion:
     client = openai.AsyncOpenAI(api_key=api_key)
 
@@ -39,7 +39,14 @@ async def execute(
 
         # Send the proof to the Solana contract
         await solana_client.add_authority(solana_account.pubkey())
-        await solana_client.add_proof(AttestationProof(hash_value, bytes(signature), solana_account.pubkey(), attestation_doc_hash))
+        await solana_client.add_proof(
+            AttestationProof(
+                hash_value,
+                bytes(signature),
+                solana_account.pubkey(),
+                attestation_doc_hash,
+            )
+        )
 
         response = ChatCompletion(
             **openai_response.dict(),
