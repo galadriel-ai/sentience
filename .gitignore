@@ -1,7 +1,9 @@
 .idea
+**/.vscode
 **/__pycache__/**
 build
 **/.env
 enclave/.DS_Store
+enclave/solana.key
 .DS_Store
 *.key
