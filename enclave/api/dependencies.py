@@ -1,16 +1,15 @@
-import key_manager
+from utils.solana_client import ContractClient
+from config import settings
 
-# pylint: disable=import-error
-from solders.keypair import Keypair
-
-solana_account: Keypair
+# pylint: disable=C0103
+solana_client: ContractClient
 
 
 # pylint: disable=W0603
 def init_globals():
-    global solana_account
-    solana_account = key_manager.get_account()
+    global solana_client
+    solana_client = ContractClient(settings.SOLANA_RPC_URL)
 
 
-def get_solana_account() -> Keypair:
-    return solana_account
+def get_solana_client() -> ContractClient:
+    return solana_client

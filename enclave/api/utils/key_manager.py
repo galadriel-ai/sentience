@@ -4,7 +4,7 @@ from typing import Optional
 # pylint: disable=import-error
 from solders.keypair import Keypair
 
-KEY_FILE = "solana.key"
+from config import settings
 
 
 def get_account() -> Keypair:
@@ -19,13 +19,13 @@ def get_account() -> Keypair:
 
 
 def _get_private_key() -> Optional[bytes]:
-    if os.path.exists(KEY_FILE):
-        with open(KEY_FILE, "rb") as file:
+    if os.path.exists(settings.SOLANA_KEYPAIR_DIR):
+        with open(settings.SOLANA_KEYPAIR_DIR, "rb") as file:
             return file.read()
     return None
 
 
 def _save_private_key(account: Keypair):
     private_key = bytes(account)
-    with open(KEY_FILE, "wb") as file:
+    with open(settings.SOLANA_KEYPAIR_DIR, "wb") as file:
         file.write(private_key)

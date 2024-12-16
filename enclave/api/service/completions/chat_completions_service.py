@@ -13,6 +13,7 @@ from solders.keypair import Keypair
 from nsm_util import NSMUtil
 from service.completions.entities import ChatCompletion
 from service.completions.entities import ChatCompletionRequest
+from utils.solana_client import ContractClient, AttestationProof
 
 nsm_util = NSMUtil()
 
@@ -21,7 +22,7 @@ async def execute(
     api_key: str,
     request: ChatCompletionRequest,
     api_request: Request,
-    solana_account: Keypair,
+    solana_client: ContractClient,
 ) -> ChatCompletion:
     client = openai.AsyncOpenAI(api_key=api_key)
 
@@ -30,12 +31,28 @@ async def execute(
         openai_response = await client.chat.completions.create(**params)  # type: ignore
         hash_value = await _hash_request_and_response(api_request, openai_response)
 
+        solana_account = solana_client.get_keypair()
+        signature = solana_account.sign_message(hash_value)
+
+        attestation_doc = _generate_attestation_document(solana_account)
+        attestation_doc_hash = hashlib.sha256(attestation_doc.encode("utf-8")).digest()
+
+        # Send the proof to the Solana contract
+        await solana_client.add_proof(
+            AttestationProof(
+                hash_value,
+                signature,
+                solana_account.pubkey(),
+                attestation_doc_hash,
+            )
+        )
+
         response = ChatCompletion(
             **openai_response.dict(),
             hash=hash_value.hex(),
             public_key=str(solana_account.pubkey()),
-            signature=bytes(solana_account.sign_message(hash_value)).hex(),
-            attestation=_generate_attestation_document(solana_account),
+            signature=bytes(signature).hex(),
+            attestation=attestation_doc,
         )
         return response
     except openai.APIError as e:
