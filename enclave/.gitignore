@@ -1,1 +1,5 @@
 venv
+.env
+.vscode
+__pycache__
+solana.key

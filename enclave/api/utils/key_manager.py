@@ -4,7 +4,7 @@ from typing import Optional
 # pylint: disable=import-error
 from solders.keypair import Keypair
 
-import config.settings as settings
+from config import settings
 
 
 def get_account() -> Keypair:

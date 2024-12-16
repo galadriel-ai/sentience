@@ -1,4 +1,3 @@
-import json
 import os
 from pathlib import Path
 
@@ -11,7 +10,7 @@ load_dotenv(dotenv_path=env_path)
 SOLANA_RPC_URL = os.getenv("SOLANA_DEVNET_URL", "https://api.devnet.solana.com")
 
 SOLANA_PROGRAM_ID = os.getenv("SOLANA_PROGRAM_ID", "HCkvLKhWQ8TTRdoSry29epRZnAoEDhP9CjmDS8jLtY9")
-SOLANA_KEYPAIR_DIR = os.getenv("SOLANA_KEYPAIR_DIR", "solana.id.json")
+SOLANA_KEYPAIR_DIR = os.getenv("SOLANA_KEYPAIR_DIR", "solana.key")
 INSTRUCTION_DISCRIMINATORS = {
     "add_authority": [229, 9, 106, 73, 91, 213, 109, 183],
     "remove_authority": [242, 104, 208, 132, 190, 250, 74, 216],

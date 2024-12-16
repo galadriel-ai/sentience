@@ -1,9 +1,9 @@
 import asyncio
 import json
 import os
-import api.utils.solana_client as solana_client
-import api.utils.key_manager as key_manager
-import api.config.settings as settings
+from api.utils import solana_client, key_manager
+from api.config import settings
+# pylint: disable=import-error
 from solders.keypair import Keypair
 
 KEYPAIR_DIR = "~/.config/solana/id.json"
@@ -11,7 +11,7 @@ KEYPAIR_DIR = "~/.config/solana/id.json"
 async def main():
     # Create a ContractClient object
     keypair = None
-    with open(os.path.expanduser(KEYPAIR_DIR), "r") as file:
+    with open(os.path.expanduser(KEYPAIR_DIR), "r" , encoding="utf-8") as file:
         seed = json.load(file)
         keypair = Keypair.from_bytes(seed)
     if not keypair:
