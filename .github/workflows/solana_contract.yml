@@ -15,5 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: metadaoproject/setup-anchor@v2
+        with:
+            anchor-version: '0.30.1' 
+            solana-cli-version: '2.0.19'
+            node-version: '23.3.0'
       - run: anchor build
       - run: anchor test
