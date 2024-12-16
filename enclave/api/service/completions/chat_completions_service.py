@@ -38,7 +38,6 @@ async def execute(
         attestation_doc_hash = hashlib.sha256(attestation_doc.encode("utf-8")).digest()
 
         # Send the proof to the Solana contract
-        await solana_client.add_authority(solana_account.pubkey())
         await solana_client.add_proof(
             AttestationProof(
                 hash_value,
