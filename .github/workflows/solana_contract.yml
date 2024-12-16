@@ -1,4 +1,4 @@
-name: example-workflow
+name: Solana Contract Build and Test
 on: 
     push:
         paths:
@@ -12,5 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: metadaoproject/setup-anchor@v2
+      - run: cd solana-attestation-contract
       - run: anchor build
       - run: anchor test
