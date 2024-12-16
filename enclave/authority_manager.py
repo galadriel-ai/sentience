@@ -1,3 +1,5 @@
+from typing import Optional
+
 import argparse
 import asyncio
 import json
@@ -8,18 +10,17 @@ import sys
 from solders.keypair import Keypair
 from solders.pubkey import Pubkey
 
-# Add the absolute path of the 'api' directory to sys.path
 script_dir = os.path.dirname(os.path.abspath(__file__))
 api_dir = os.path.join(script_dir, "api")
 sys.path.append(api_dir)
-
-from utils import solana_client, key_manager
+# pylint: disable=C0413
+from utils import solana_client
 from config import settings
 
 KEYPAIR_DIR = "~/.config/solana/id.json"
 
 
-async def main(args: argparse.Namespace):
+async def main(arg_add: Optional[str], arg_remove: Optional[str]):
     # Create a ContractClient object
     keypair = None
     with open(os.path.expanduser(KEYPAIR_DIR), "r", encoding="utf-8") as file:
@@ -37,15 +38,15 @@ async def main(args: argparse.Namespace):
         print("Failed to connect to Solana RPC")
         return
 
-    if args.add:
+    if arg_add:
         # Call the add_authority method of the client object
-        print(f"Adding authority: {args.add}")
-        response = await client.add_authority(Pubkey.from_string(args.add))
+        print(f"Adding authority: {arg_add}")
+        response = await client.add_authority(Pubkey.from_string(arg_add))
         print(response)
-    elif args.remove:
+    elif arg_remove:
         # Call the remove_authority method of the client object
-        print(f"Removing authority: {args.remove}")
-        response = await client.remove_authority(Pubkey.from_string(args.remove))
+        print(f"Removing authority: {arg_remove}")
+        response = await client.remove_authority(Pubkey.from_string(arg_remove))
         print(response)
 
     # Call the close method of the client object
@@ -53,9 +54,11 @@ async def main(args: argparse.Namespace):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Add or remove authority to/from Solana contract")
+    parser = argparse.ArgumentParser(
+        description="Add or remove authority to/from Solana contract"
+    )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-a", "--add", help="Public key to add as authority")
     group.add_argument("-r", "--remove", help="Public key to remove as authority")
     args = parser.parse_args()
-    asyncio.run(main(args))
+    asyncio.run(main(args.add, args.remove))
