@@ -24,7 +24,7 @@ router.tags = [TAG]
 async def completions(
     api_request: Request,
     request: ChatCompletionRequest,
-    solana_account=Depends(dependencies.get_solana_account),
+    solana_client=Depends(dependencies.get_solana_client),
     authorization: str = Header(...),
 ):
     if not authorization.startswith("Bearer "):
@@ -34,5 +34,5 @@ async def completions(
 
     api_key = authorization.split(" ", 1)[1]
     return await chat_completions_service.execute(
-        api_key, request, api_request, solana_account
+        api_key, request, api_request, solana_client
     )
