@@ -259,6 +259,9 @@ class ChatCompletion(OpenAiChatCompletion):
     signature: str = Field(
         description="The signature of the hash, signed by the Solana account in hex format.",
     )
+    tx_hash: str = Field(
+        description="The transaction hash of the solana instruction call add_proof.",
+    )
     attestation: str = Field(
         description="The attestation document.",
     )

@@ -38,7 +38,7 @@ async def execute(
         attestation_doc_hash = hashlib.sha256(attestation_doc.encode("utf-8")).digest()
 
         # Send the proof to the Solana contract
-        await solana_client.add_proof(
+        tx_response = await solana_client.add_proof(
             AttestationProof(
                 hash_value,
                 signature,
@@ -47,11 +47,16 @@ async def execute(
             )
         )
 
+        if tx_response.value is None:
+            # pylint: disable=broad-exception-raised
+            raise Exception("The solana transaction failed - no value returned")
+
         response = ChatCompletion(
             **openai_response.dict(),
             hash=hash_value.hex(),
             public_key=str(solana_account.pubkey()),
             signature=bytes(signature).hex(),
+            tx_hash=bytes(tx_response.value).hex(),
             attestation=attestation_doc,
         )
         return response
@@ -59,6 +64,8 @@ async def execute(
         raise HTTPException(
             status_code=503, detail=f"Error communicating with OpenAI: {str(e)}"
         )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 async def _hash_request_and_response(
