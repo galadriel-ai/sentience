@@ -48,6 +48,7 @@ async def execute(
         )
 
         if tx_response.value is None:
+            # pylint: disable=broad-exception-raised
             raise Exception("The solana transaction failed - no value returned")
 
         response = ChatCompletion(
