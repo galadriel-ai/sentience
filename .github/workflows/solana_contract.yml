@@ -1,6 +1,8 @@
 name: Solana Contract Build and Test
 on: 
   push:
+    branches:
+      - main
     paths:
       - 'solana-attestation-contract/**'
   pull_request:
@@ -41,4 +43,6 @@ jobs:
         run: anchor build
 
       - name: Unit test
-        run: anchor test
+        run: |
+          solana-keygen new 
+          anchor test
