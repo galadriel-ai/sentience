@@ -16,9 +16,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+        uses: dtolnay/rust-toolchain@master
+        with:
+            toolchain: nightly-2024-11-19
+            components: rustfmt, clippy
     
-      - name: Install Anchor
+      - name: Install Solana CLI
         run: |
             sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
             echo "/home/runner/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
@@ -34,5 +37,8 @@ jobs:
       - name: Install yarn
         run: npm install -g yarn
 
-      - run: anchor build
-      - run: anchor test
+      - name: Build contract
+        run: anchor build
+
+      - name: Unit test
+        run: anchor test
