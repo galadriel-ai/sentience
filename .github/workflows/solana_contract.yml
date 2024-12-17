@@ -39,10 +39,20 @@ jobs:
       - name: Install yarn
         run: npm install -g yarn
 
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules/
+          key: node-modules-${{ runner.os }}-build-23
+        
+      - name: Create keypair
+        run: solana-keygen new --no-bip39-passphrase
+
       - name: Build contract
         run: anchor build
 
+      - name: Cache Cargo dependencies
+        uses: Swatinem/rust-cache@v2
+
       - name: Unit test
-        run: |
-          solana-keygen new 
-          anchor test
+        run: anchor test
