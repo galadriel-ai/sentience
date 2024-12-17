@@ -1,6 +1,12 @@
 name: Lint
 
-on: [push, pull_request]
+on: 
+  push:
+    paths-ignore:
+      - 'solana-attestation-contract/**'
+  pull_request:
+    paths-ignore:
+      - 'solana-attestation-contract/**'
 
 jobs:
   lint:

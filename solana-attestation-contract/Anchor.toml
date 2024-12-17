@@ -11,7 +11,7 @@ solana_attestation_contract = "HCkvLKhWQ8TTRdoSry29epRZnAoEDhP9CjmDS8jLtY9"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

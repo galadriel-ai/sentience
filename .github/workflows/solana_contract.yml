@@ -1,0 +1,60 @@
+name: Solana Contract Build and Test
+on: 
+  push:
+    branches:
+      - main
+    paths:
+      - 'solana-attestation-contract/**'
+  pull_request:
+    paths:
+      - 'solana-attestation-contract/**'
+jobs:
+  run-anchor-build:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./solana-attestation-contract
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+            toolchain: nightly-2024-11-19
+            components: rustfmt, clippy
+    
+      - name: Install Solana CLI
+        run: |
+            sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+            echo "/home/runner/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+    
+      - name: Install Anchor CLI
+        run: cargo install --git https://github.com/coral-xyz/anchor --tag v0.30.1 anchor-cli
+    
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23'
+    
+      - name: Install yarn
+        run: |
+          npm install -g yarn
+          yarn install
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules/
+          key: node-modules-${{ runner.os }}-build-23
+        
+      - name: Create keypair
+        run: solana-keygen new --no-bip39-passphrase
+
+      - name: Build contract
+        run: anchor build
+
+      - name: Cache Cargo dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Unit test
+        run: anchor test
