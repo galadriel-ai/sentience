@@ -24,31 +24,31 @@ jobs:
       - name: Install Python Dependencies
         run: |
           pip install -r enclave/requirements.txt
-          pip install -r proxy/requirements.txt
+          pip install -r host/requirements.txt
           pip install mypy pyright
       - name: Run PyLint
         run: |
           pylint --rcfile=setup.cfg enclave/*
-          pylint --rcfile=setup.cfg proxy/*
+          pylint --rcfile=setup.cfg host/*
 
       - name: Create output directory
         run: mkdir -p mypy_pyright_outputs
       - name: Run mypy and save output
         run: |
           mypy enclave/ > mypy_pyright_outputs/mypy_output_enclave.txt || true
-          mypy proxy/ > mypy_pyright_outputs/mypy_output_proxy.txt || true
+          mypy host/ > mypy_pyright_outputs/mypy_output_host.txt || true
         continue-on-error: true
       - name: Print mypy output
         run: |
           echo "=== mypy output ==="
           cat mypy_pyright_outputs/mypy_output_enclave.txt
-          cat mypy_pyright_outputs/mypy_output_proxy.txt
+          cat mypy_pyright_outputs/mypy_output_host.txt
       - name: Count mypy errors
         id: mypy-count
         run: |
           enclave_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_enclave.txt | sed 's/ errors//g' || echo 0)
-          proxy_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_proxy.txt | sed 's/ errors//g' || echo 0)
-          error_count=$((enclave_error_count + proxy_error_count))
+          host_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_host.txt | sed 's/ errors//g' || echo 0)
+          error_count=$((enclave_error_count + host_error_count))
           echo "Mypy error count: $error_count"
           if [[ "$error_count" -gt 0 ]]; then
             echo "::error::Found $error_count mypy errors."
@@ -57,19 +57,19 @@ jobs:
       - name: Run pyright and save output
         run: |
           pyright enclave/ > mypy_pyright_outputs/pyright_enclave_output.txt || true
-          pyright proxy/ > mypy_pyright_outputs/pyright_proxy_output.txt || true
+          pyright host/ > mypy_pyright_outputs/pyright_host_output.txt || true
         continue-on-error: true
       - name: Print pyright output
         run: |
           echo "=== pyright output ==="
           cat mypy_pyright_outputs/pyright_enclave_output.txt
-          cat mypy_pyright_outputs/pyright_proxy_output.txt
+          cat mypy_pyright_outputs/pyright_host_output.txt
       - name: Count pyright errors
         id: pyright-count
         run: |
           enclave_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/pyright_enclave_output.txt | sed 's/ errors//g' || echo 0)
-          proxy_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_proxy.txt | sed 's/ errors//g' || echo 0)
-          error_count=$((enclave_error_count + proxy_error_count))
+          host_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_host.txt | sed 's/ errors//g' || echo 0)
+          error_count=$((enclave_error_count + host_error_count))
           echo "pyright error count: $error_count"
           if [[ "$error_count" -gt 0 ]]; then
             echo "::warning::Found $error_count pyright errors."
