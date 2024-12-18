@@ -53,8 +53,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     pcr0_hash = args.pcr0_hash
     if not pcr0_hash:
-        raise Exception(
-            "No arguments passed, pass --pcr0_hash <hash>"
-        )
+        raise Exception("No arguments passed, pass --pcr0_hash <hash>")
 
     main(pcr0_hash)
