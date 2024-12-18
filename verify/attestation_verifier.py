@@ -41,7 +41,7 @@ def verify_attestation_doc(attestation_doc, pcrs=[], root_cert_pem=None):
 
         # Check if PCR match
         if pcr != doc_pcr:
-            raise Exception("Wrong PCR%s" % index)
+            raise Exception(f"Wrong PCR{index}\nEnclaves PCR{index}: {doc_pcr}")
 
     # Part 2: Validating signature
 

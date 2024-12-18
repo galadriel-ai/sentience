@@ -1,15 +1,16 @@
 # Attestation Verification
 
-This directory contains instructions and code for verifying the oracle running inside the TEE.
+This directory contains instructions and code for verifying the TEE.
 
 Here's a high-level diagram of the steps needed to fully verify the oracle:
 
-![](/verification-diagram.png)
+![](/verification-diagram2.png)
 
-1. Verify that the docker image was converted into the enclave image correctly.
-1. Verify an oracle attestation by pulling it from the chain and checking that it is correctly signed by AWS, and that it corresponds to the enclave image hash.
+1. Verify that the code was converted to the docker image correctly. Docker image building can be non deterministic that can introduce errors.
+2. Verify that the docker image was converted into the enclave image correctly. Enclave image is always created with a hash that proves that the code from step 1 is now inside the enclave image.
+3. Verify an TEE attestation by making a verified inference request and checking that it is indeed correctly signed by AWS, and that it corresponds to the enclave image hash.
 
-We explain below how to execute both verification steps below.
+We explain below how to execute both verification steps below. 
 
 ### 0. Prerequisites
 
@@ -43,9 +44,19 @@ sudo yum install python-pip -y
 sudo reboot
 ```
 
-### 1. Create the enclave image
+### 1. Create the docker image (Optional)
+
+This step can be non deterministic in certain scenarios. To make sure that you are working with exactly the same docker image you can also pull it from the docker hub.
 
 ```shell
+cd ../enclave
+docker build -t aws_enclave .
+```
+
+### 2. Create the enclave image
+
+```shell
+cd ../verify
 nitro-cli build-enclave --docker-uri "ghcr.io/galadriel-ai/aws_enclave:v0.0.2" --output-file "galadriel.eif"
 ```
 
@@ -66,11 +77,10 @@ Enclave Image successfully created.
 ### Setup Python
 
 ```shell
-python3 -m pip install -r requirements.txt
-python3 -m pip install --upgrade pyOpenSSL
+pip install -r requirements.txt
 ```
 
-### 2. Verify attestation
+### 3. Verify attestation
 
 Optionally, you can download the root.pem from Amazon and verify it is the same 
 as the `root.pem` in this repo: https://aws-nitro-enclaves.amazonaws.com/AWS_NitroEnclaves_Root-G1.zip
@@ -81,11 +91,7 @@ This uses the `attestation_doc_b64.txt` file
 # The argument is the PCR0 from the enclave image build step.
 python3 verify.py --pcr0_hash b3a233e8a1d2682455777643d5a793c9d231754ebd89e8ffc14b07a21da0de07920763e87f8cc6eb3a6d362beeb4f541
 ```
-**Verify with oracle address**
-```shell
-python3 verify.py --oracle_address 0xAEF14f51b3716F6CeDc483DDB3fBE1C30D084457
-```
-**Verify with a transaction hash made by the oracle**
-```shell
-python3 verify.py --tx_hash 0xd7dccc2479a78b6f711673f4a49f022a28ff5daafcf8b267cae236b6da49a690
-```
+
+Congratulations! You have now successfully verified the attestation. This means that the code inside the TEE is exactly the same as in ../enclave sub folder and will be executed exactly as intended without any way for Galadriel to interfere.
+
+All the LLM inferences coming out of the TEE are signed by the private key inside the enclave. The public key of this is exported together with attestation and signed by AWS. If the public key is known you can now easily verify the LLM response signatures.
