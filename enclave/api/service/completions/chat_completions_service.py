@@ -56,7 +56,7 @@ async def execute(
             hash=hash_value.hex(),
             public_key=str(solana_account.pubkey()),
             signature=bytes(signature).hex(),
-            tx_hash=bytes(tx_response.value).hex(),
+            tx_hash=str(tx_response.value),
             attestation=attestation_doc,
         )
         return response
