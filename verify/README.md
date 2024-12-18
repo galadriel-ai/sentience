@@ -7,8 +7,8 @@ Here's a high-level diagram of the steps needed to fully verify the oracle:
 ![](/verification-diagram2.png)
 
 1. Verify that the code was converted to the docker image correctly. Docker image building can be non deterministic that can introduce errors.
-2. Verify that the docker image was converted into the enclave image correctly. Enclave image is always created with a hash that proves that the code from step 1 is now inside the enclave image.
-3. Verify an TEE attestation by making a verified inference request and checking that it is indeed correctly signed by AWS, and that it corresponds to the enclave image hash.
+2. Verify that the docker image was converted into the enclave image correctly. Enclave image is always created with a hash (PCR0) that proves that the code from step 1 is now inside the enclave image.
+3. Verify TEE attestation that you got from a verified inference request and checking that it is indeed correctly signed by AWS, and that it corresponds to the enclave image hash.
 
 We explain below how to execute both verification steps below. 
 
