@@ -5,3 +5,4 @@ cose==0.9.dev2
 cryptography==42.0.4
 pycryptodome==3.19.1
 pyOpenSSL==24.0.0
+base58==2.1.1

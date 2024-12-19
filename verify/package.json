@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "bs58": "^6.0.0",
+    "tweetnacl": "^1.0.3"
+  },
+  "name": "verify",
+  "version": "1.0.0",
+  "description": "This directory contains instructions and code for verifying the TEE.",
+  "main": "verify_signature.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
