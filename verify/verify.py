@@ -1,15 +1,7 @@
 import argparse
 import base64
-from typing import Optional
 
 import attestation_verifier
-
-ATTESTATION_DOC_B64_PATH = "attestation_doc_b64.txt"
-
-
-def _read_attestation_doc():
-    with open(ATTESTATION_DOC_B64_PATH, "r", encoding="utf-8") as file:
-        return file.read()
 
 
 def get_root_pem():
@@ -23,11 +15,11 @@ def save_public_key(public_key):
 
 
 def main(
-    pcr0: Optional[str],
+    pcr0: str,
+    _attestation: str
 ):
-    attestation_doc_b64 = _read_attestation_doc()
     root_cert_pem = get_root_pem()
-    attestation_doc = base64.b64decode(attestation_doc_b64)
+    attestation_doc = base64.b64decode(_attestation)
 
     try:
         attestation_verifier.verify_attestation_doc(
@@ -50,9 +42,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Verify pcr0 hash and attestation doc")
 
     parser.add_argument("--pcr0_hash")
+    parser.add_argument("--attestation")
     args = parser.parse_args()
     pcr0_hash = args.pcr0_hash
-    if not pcr0_hash:
-        raise Exception("No arguments passed, pass --pcr0_hash <hash>")
+    attestation = args.attestation
+    if not pcr0_hash or not attestation:
+        raise Exception(
+            "No arguments passed, pass --pcr0_hash <hash> and --attestation <attestation>")
 
-    main(pcr0_hash)
+    main(pcr0_hash, attestation)
