@@ -28,13 +28,11 @@ auth_key_regex = re.compile(r"Bearer\s+(.+)")
 async def completions(
     api_request: Request,
     request: ChatCompletionRequest,
-    solana_client=Depends(dependencies.get_solana_client),
+    enclave_keypair=Depends(dependencies.get_enclave_keypair),
     authorization: str = Header(...),
 ):
     auth_key = extract_auth_key(authorization)
-    return await chat_completions_service.execute(
-        auth_key, request, api_request, solana_client
-    )
+    return await chat_completions_service.execute(auth_key, request, api_request, enclave_keypair)
 
 
 def extract_auth_key(authorization: str) -> str:
