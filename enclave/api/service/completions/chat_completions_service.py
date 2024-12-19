@@ -11,7 +11,10 @@ from nsm_util import NSMUtil
 from service.completions.entities import ChatCompletion
 from service.completions.entities import ChatCompletionRequest
 
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 import (
+    Ed25519PrivateKey,
+    Ed25519PublicKey,
+)
 from cryptography.hazmat.primitives import serialization
 
 nsm_util = NSMUtil()
@@ -47,7 +50,9 @@ async def execute(
         )
         return response
     except openai.APIError as e:
-        raise HTTPException(status_code=503, detail=f"Error communicating with OpenAI: {str(e)}")
+        raise HTTPException(
+            status_code=503, detail=f"Error communicating with OpenAI: {str(e)}"
+        )
 
 
 async def _hash_request_and_response(
@@ -58,6 +63,6 @@ async def _hash_request_and_response(
     return hashlib.sha256(combined_str.encode("utf-8")).digest()
 
 
-def _generate_attestation_document(enclave_pubkey: Ed25519PublicKey) -> str:
+def _generate_attestation_document(enclave_pubkey: bytes) -> str:
     attestation_doc = nsm_util.get_attestation_doc(enclave_pubkey)
     return base64.b64encode(attestation_doc).decode()

@@ -32,7 +32,9 @@ async def completions(
     authorization: str = Header(...),
 ):
     auth_key = extract_auth_key(authorization)
-    return await chat_completions_service.execute(auth_key, request, api_request, enclave_keypair)
+    return await chat_completions_service.execute(
+        auth_key, request, api_request, enclave_keypair
+    )
 
 
 def extract_auth_key(authorization: str) -> str:
