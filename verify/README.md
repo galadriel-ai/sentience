@@ -95,3 +95,17 @@ python3 verify.py --pcr0_hash b3a233e8a1d2682455777643d5a793c9d231754ebd89e8ffc1
 Congratulations! You have now successfully verified the attestation. This means that the code inside the TEE is exactly the same as in ../enclave sub folder and will be executed exactly as intended without any way for Galadriel to interfere.
 
 All LLM inferences coming out of the TEE are signed by the private key inside the enclave. The corresponding public key is exported together with attestation and signed by AWS. If the public key is known you can now easily verify the LLM response signatures.
+
+# Verify Signatures
+
+In Python:
+```shell
+# Edit the verify_signature.py variables (hash, signature, publick_key)
+python verify_signature.py
+```
+
+In Javascript:
+```shell
+# Edit the verify_signature.js variables (hash, signature, publick_key)
+node verify_signature.js
+```
