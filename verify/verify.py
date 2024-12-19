@@ -14,10 +14,7 @@ def save_public_key(public_key):
         file_out.write(public_key)
 
 
-def main(
-    pcr0: str,
-    _attestation: str
-):
+def main(pcr0: str, _attestation: str):
     root_cert_pem = get_root_pem()
     attestation_doc = base64.b64decode(_attestation)
 
@@ -48,6 +45,7 @@ if __name__ == "__main__":
     attestation = args.attestation
     if not pcr0_hash or not attestation:
         raise Exception(
-            "No arguments passed, pass --pcr0_hash <hash> and --attestation <attestation>")
+            "No arguments passed, pass --pcr0_hash <hash> and --attestation <attestation>"
+        )
 
     main(pcr0_hash, attestation)
