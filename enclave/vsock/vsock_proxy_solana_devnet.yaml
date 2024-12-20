@@ -1,2 +1,0 @@
-allowlist:
-  - { address: api.devnet.solana.com, port: 443 }
