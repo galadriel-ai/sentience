@@ -1,7 +1,6 @@
-# Sentience AI stack
+# Sentient AI Agents Stack
 
-Stack for building provable AI Agents like [Daige](https://www.daige.ai/).
-Tap into Galadriel's verified inference which powers Daige’s [Proof of Sentience](https://www.daige.ai/proof).
+An open-source developer stack from Galadriel to enable building and deploying fully sentient AI agents like [Daige](https://www.daige.ai/).
 
 ## Features
 - Addresses the challenge of proving that the AI agents run autonomously and are not influenced by the human operators
