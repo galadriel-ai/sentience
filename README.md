@@ -4,11 +4,12 @@ Stack for building provable AI Agents like [Daige](https://www.daige.ai/).
 Tap into Galadriel's verified inference which powers Daige’s [Proof of Sentience](https://www.daige.ai/proof).
 
 ## Features
-- Addresses the challenge of proving that the AI agents run autonomously and are not influenced by the human operators.
-- It Ensures the LLM inference is executed inside [Amazon Nitro Enclaves](https://aws.amazon.com/ec2/nitro/nitro-enclaves/). The enclave can't be accessed from the outside which gives it security.
+- Addresses the challenge of proving that the AI agents run autonomously and are not influenced by the human operators
+- It Ensures the LLM inference is executed inside [Amazon Nitro Enclaves](https://aws.amazon.com/ec2/nitro/nitro-enclaves/). The enclave can't be accessed from the outside which gives it security
+- The enclave signs the inference response with its own private key
 - Provides an OpenAI compatible chat completion API
-- Returns additional values in inference response to enable verification of the inference.
-- Posts proofs of inference responses to Solana.
+- Returns additional values in inference response to enable verification of the inference
+- Posts proofs of inference responses to Solana
 
 ## Project Structure
 
