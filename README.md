@@ -8,7 +8,7 @@ Tap into Galadriel's verified inference which powers Daige’s [Proof of Sentien
 - It Ensures the LLM inference is executed inside [Amazon Nitro Enclaves](https://aws.amazon.com/ec2/nitro/nitro-enclaves/). The enclave can't be accessed from the outside which gives it security
 - The enclave signs the inference response with its own private key
 - Provides an OpenAI compatible chat completion API
-- Returns additional values in inference response to enable verification of the inference
+- Returns additional values in inference response to enable verification of the inference ([verification logic](verify/verify.py))
 - Posts proofs of inference responses to Solana
 
 ## Project Structure
