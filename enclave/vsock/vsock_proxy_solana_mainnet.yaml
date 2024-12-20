@@ -1,2 +1,0 @@
-allowlist:
-  - { address: api.mainnet-beta.solana.com, port: 443 }
