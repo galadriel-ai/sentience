@@ -14,14 +14,14 @@ python = "^3.10"
 openai = "^1.55.3"
 pynacl = "^1.5.0"
 requests = "2.31.0"
-black = {version = "^24.8.0", optional = true}
-pytest = {version = "^8.3.2", optional = true}
-pytest-asyncio = {version = "0.24.0", optional = true}
-pytest-mock = {version = "^3.14.0", optional = true}
-
+black = { version = "^24.8.0", optional = true }
+pytest = { version = "^8.3.2", optional = true }
+pytest-asyncio = { version = "0.24.0", optional = true }
+pytest-mock = { version = "^3.14.0", optional = true }
+twine = { version = "^5.1.1", optional = true }
 
 [tool.poetry.extras]
-dev = ["black", "pytest", "pytest-asyncio", "pytest-mock"]
+dev = ["black", "pytest", "pytest-asyncio", "pytest-mock", "twine"]
 
 [build-system]
 requires = ["poetry-core"]
