@@ -1,18 +1,17 @@
 import nacl from 'tweetnacl';
-import bs58 from 'bs58';
 
 // Given values
-// TODO: fix with your values
-const hashHex = "ce855e4a2c6fc713c3c5b629ada24cf119f8ed37cce719c8b51ef1841206b020";
-const signatureHex = "afb7252df102fd4fd15e2791fe5170dad4b9d775eb5ac31cc6a9c040d62bb673e0e481128f5c4e0a1f8c031298278e57710525222a4f8029270f4e10017c6901";
-const publicKeyBase58 = "Dp2k554Ebsij5RjuhjsZujVW2bJnQzfb43VYZSQ4NZo1";
+// TODO: change to your values
+const hash = "c847e98b1abf528f988c0253840616405a014ef2494e7a1b6c8d35e90413dd0a";
+const signature = "68603b802f1e293dbf21bb1004bd08bca272fc70b6d00556f2a06b35949319533ad527c614c063836601aa00c8ca960dc600cad990df1ff8ff18079a09561d07";
+const publicKey = "835cc0e84c2a5190561d7c2eaf10eb2597cbe7a71541084c5edea32b60bc5e68";
 
-// Decode the public key from Base58
-const publicKeyBytes = bs58.decode(publicKeyBase58);
+// Decode the public key from hex
+const publicKeyBytes = Buffer.from(publicKey, 'hex');
 
 // Decode the message (hash) and signature from hex
-const messageBytes = Buffer.from(hashHex, 'hex');
-const signatureBytes = Buffer.from(signatureHex, 'hex');
+const messageBytes = Buffer.from(hash, 'hex');
+const signatureBytes = Buffer.from(signature, 'hex');
 
 // Verify the signature
 const isValid = nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes);

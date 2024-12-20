@@ -1,20 +1,21 @@
+# pip install pynacl
+# python verify.py
 import binascii
-import base58
 import nacl.signing
 import nacl.exceptions
 
 # Given values
-# TODO: fix with your values
-hash_hex = "ce855e4a2c6fc713c3c5b629ada24cf119f8ed37cce719c8b51ef1841206b020"
-signature_hex = "afb7252df102fd4fd15e2791fe5170dad4b9d775eb5ac31cc6a9c040d62bb673e0e481128f5c4e0a1f8c031298278e57710525222a4f8029270f4e10017c6901"
-public_key_b58 = "Dp2k554Ebsij5RjuhjsZujVW2bJnQzfb43VYZSQ4NZo1"
+# TODO: change to your values
+hash = "c847e98b1abf528f988c0253840616405a014ef2494e7a1b6c8d35e90413dd0a"
+signature = "68603b802f1e293dbf21bb1004bd08bca272fc70b6d00556f2a06b35949319533ad527c614c063836601aa00c8ca960dc600cad990df1ff8ff18079a09561d07"
+public_key = "835cc0e84c2a5190561d7c2eaf10eb2597cbe7a71541084c5edea32b60bc5e68"
 
+public_key_bytes = binascii.unhexlify(public_key)
 # Decode the public key from base58 into raw bytes
-public_key_bytes = base58.b58decode(public_key_b58)
 
 # Decode the hash (message) and signature from hex
-message_bytes = binascii.unhexlify(hash_hex)
-signature_bytes = binascii.unhexlify(signature_hex)
+message_bytes = binascii.unhexlify(hash)
+signature_bytes = binascii.unhexlify(signature)
 
 # Create a VerifyKey object from the public key bytes
 verify_key = nacl.signing.VerifyKey(public_key_bytes)
