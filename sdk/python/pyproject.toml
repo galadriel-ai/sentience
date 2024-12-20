@@ -19,9 +19,10 @@ pytest = { version = "^8.3.2", optional = true }
 pytest-asyncio = { version = "0.24.0", optional = true }
 pytest-mock = { version = "^3.14.0", optional = true }
 twine = { version = "^5.1.1", optional = true }
+build = { version = "^1.2.2", optional = true }
 
 [tool.poetry.extras]
-dev = ["black", "pytest", "pytest-asyncio", "pytest-mock", "twine"]
+dev = ["black", "pytest", "pytest-asyncio", "pytest-mock", "twine", "build"]
 
 [build-system]
 requires = ["poetry-core"]
