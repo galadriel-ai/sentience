@@ -16,7 +16,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="https://api.galadriel.com/v1/verified",
-    api_key=GALADRIEL_API_KEY,
+    api_key="Bearer GALADRIEL_API_KEY",
 )
 
 completion = client.chat.completions.create(
@@ -27,6 +27,7 @@ completion = client.chat.completions.create(
     ],
 )
 
+print("completion:", completion)
 is_valid = sentience.verify_signature(completion)
 print("is_valid:", is_valid)
 ```
@@ -38,7 +39,7 @@ import sentience
 from sentience.history import GaladrielChatHistory
 
 history: List[GaladrielChatHistory] = sentience.get_history(
-    galadriel_api_key=GALADRIEL_API_KEY
+    galadriel_api_key="Bearer GALADRIEL_API_KEY"
 )
 
 for item in history:
@@ -61,18 +62,18 @@ import sentience
 from sentience.history import GaladrielChatHistory
 
 item: GaladrielChatHistory = sentience.get_by_hash(
-        galadriel_api_key=GALADRIEL_API_KEY,
-        hash="922e575ef7f07449977001c1caaf78fb6ad8b731cd625434f9215087a6c2b39f"
-    )
-    print("\n\nResult:")
-    print(f"Request: {item.request.get('messages')}")
-    print(f"Message: {item.response.choices[0].message}")
-    print(f"Hash: {item.hash}")
-    print(f"Signed public key: {item.public_key}")
-    print(f"Signature: {item.signature}")
-    print(f"Tx hash: {item.tx_hash}")
-    print(f"Attestation: {item.attestation[:10]}...")
+    galadriel_api_key="Bearer GALADRIEL_API_KEY",
+    hash="922e575ef7f07449977001c1caaf78fb6ad8b731cd625434f9215087a6c2b39f"
+)
+print("\n\nResult:")
+print(f"Request: {item.request.get('messages')}")
+print(f"Message: {item.response.choices[0].message}")
+print(f"Hash: {item.hash}")
+print(f"Signed public key: {item.public_key}")
+print(f"Signature: {item.signature}")
+print(f"Tx hash: {item.tx_hash}")
+print(f"Attestation: {item.attestation[:10]}...")
 
-    is_valid = sentience.verify_signature(item)
-    print("is_valid:", is_valid)
+is_valid = sentience.verify_signature(item)
+print("is_valid:", is_valid)
 ```
