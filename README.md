@@ -13,10 +13,15 @@ An open-source developer stack from Galadriel to enable building and deploying f
 ## Project Structure
 
 This project is divided into these parts:
+
+Verified Inference
 1. [enclave](verified-inference/enclave) - this where the enclave is built and run
 2. [host](verified-inference/host) - proxies HTTP requests to the API running in the enclave
 3. [solana-attestation-contract](verified-inference/solana-attestation-contract) - posts proofs of inference responses to Solana
 4. [verify](verified-inference/verify) - instructions and code for verifying the TEE
+
+SDK:
+1. [python SDK](sdk/python) - Python SDK
 
 ## Quickstart
 If you are building AI Agents go to [docs](https://docs.galadriel.com/for-agents-developers/quickstart) for a quickstart guide.
