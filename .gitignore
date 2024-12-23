@@ -8,3 +8,4 @@ build
 verified-inference/enclave/.DS_Store
 .DS_Store
 *.key
+**node_modules
