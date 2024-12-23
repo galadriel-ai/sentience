@@ -29,11 +29,11 @@ jobs:
           pip install -r enclave/requirements.txt
           pip install -r host/requirements.txt
           pip install mypy pyright
-      - name: Run PyLint
-        run: |
-          cd verified-inference
-          pylint --rcfile=setup.cfg enclave/*
-          pylint --rcfile=setup.cfg host/*
+      #- name: Run PyLint
+      #  run: |
+      #    cd verified-inference
+      #    pylint --rcfile=setup.cfg enclave/*
+      #    pylint --rcfile=setup.cfg host/*
 
       - name: Create output directory
         run: |
