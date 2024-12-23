@@ -3,10 +3,10 @@ name: Lint
 on: 
   push:
     paths-ignore:
-      - 'solana-attestation-contract/**'
+      - 'verified-inference/solana-attestation-contract/**'
   pull_request:
     paths-ignore:
-      - 'solana-attestation-contract/**'
+      - 'verified-inference/solana-attestation-contract/**'
 
 jobs:
   lint:
@@ -16,4 +16,4 @@ jobs:
       - uses: psf/black@stable
         with:
           options: "--check --verbose"
-          src: "."
+          src: "verified-inference"

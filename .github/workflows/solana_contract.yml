@@ -4,16 +4,16 @@ on:
     branches:
       - main
     paths:
-      - 'solana-attestation-contract/**'
+      - 'verified-inference/solana-attestation-contract/**'
   pull_request:
     paths:
-      - 'solana-attestation-contract/**'
+      - 'verified-inference/solana-attestation-contract/**'
 jobs:
   run-anchor-build:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        working-directory: ./solana-attestation-contract
+        working-directory: ./verified-inference/solana-attestation-contract
     steps:
       - uses: actions/checkout@v4
 

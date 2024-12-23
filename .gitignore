@@ -5,6 +5,7 @@ venv
 **/__pycache__/**
 build
 **/.env
-enclave/.DS_Store
+verified-inference/enclave/.DS_Store
 .DS_Store
 *.key
+**node_modules
