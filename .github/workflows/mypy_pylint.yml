@@ -3,7 +3,7 @@ name: Lint MyPy, Pyright & Pylint
 on:
   pull_request:
     paths-ignore:
-      - 'solana-attestation-contract/**'
+      - 'verified-inference/solana-attestation-contract/**'
 
 jobs:
   lint-and-type-check:
@@ -25,29 +25,36 @@ jobs:
             ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
       - name: Install Python Dependencies
         run: |
+          cd verified-inference
           pip install -r enclave/requirements.txt
           pip install -r host/requirements.txt
           pip install mypy pyright
       - name: Run PyLint
         run: |
+          cd verified-inference
           pylint --rcfile=setup.cfg enclave/*
           pylint --rcfile=setup.cfg host/*
 
       - name: Create output directory
-        run: mkdir -p mypy_pyright_outputs
+        run: |
+          verified-inference
+          mkdir -p mypy_pyright_outputs
       - name: Run mypy and save output
         run: |
+          cd verified-inference
           mypy enclave/ > mypy_pyright_outputs/mypy_output_enclave.txt || true
           mypy host/ > mypy_pyright_outputs/mypy_output_host.txt || true
         continue-on-error: true
       - name: Print mypy output
         run: |
+          cd verified-inference
           echo "=== mypy output ==="
           cat mypy_pyright_outputs/mypy_output_enclave.txt
           cat mypy_pyright_outputs/mypy_output_host.txt
       - name: Count mypy errors
         id: mypy-count
         run: |
+          cd verified-inference
           enclave_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_enclave.txt | sed 's/ errors//g' || echo 0)
           host_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_host.txt | sed 's/ errors//g' || echo 0)
           error_count=$((enclave_error_count + host_error_count))
@@ -58,17 +65,20 @@ jobs:
           fi
       - name: Run pyright and save output
         run: |
+          cd verified-inference
           pyright enclave/ > mypy_pyright_outputs/pyright_enclave_output.txt || true
           pyright host/ > mypy_pyright_outputs/pyright_host_output.txt || true
         continue-on-error: true
       - name: Print pyright output
         run: |
+          cd verified-inference
           echo "=== pyright output ==="
           cat mypy_pyright_outputs/pyright_enclave_output.txt
           cat mypy_pyright_outputs/pyright_host_output.txt
       - name: Count pyright errors
         id: pyright-count
         run: |
+          cd verified-inference
           enclave_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/pyright_enclave_output.txt | sed 's/ errors//g' || echo 0)
           host_error_count=$(grep -oP "\d+ errors" mypy_pyright_outputs/mypy_output_host.txt | sed 's/ errors//g' || echo 0)
           error_count=$((enclave_error_count + host_error_count))
@@ -80,4 +90,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mypy-pyright-outputs
-          path: mypy_pyright_outputs/
+          path: verified-inference/mypy_pyright_outputs/
