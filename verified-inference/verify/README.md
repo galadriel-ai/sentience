@@ -4,7 +4,7 @@ This directory contains instructions and code for verifying the TEE.
 
 Here's a high-level diagram of the steps needed to fully verify the oracle:
 
-![](/verification-diagram2.png)
+![](/assets/verification-diagram.png)
 
 1. Verify that the code was converted to the docker image correctly. Docker image building can be non deterministic that can introduce errors.
 2. Verify that the docker image was converted into the enclave image correctly. Enclave image is always created with a hash (PCR0) that proves that the code from step 1 is now inside the enclave image.
