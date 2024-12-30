@@ -1,0 +1,23 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --outdir=dist --format=esm",
+    "start": "node dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/node-fetch": "^2.6.12",
+    "esbuild": "^0.24.1",
+    "typescript": "^5.7.2"
+  }
+}
