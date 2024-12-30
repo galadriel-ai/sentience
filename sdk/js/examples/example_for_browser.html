@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Use library directly with &lt;script&gt; tag</title>
+</head>
+<body>
+<h3>(2-4)Use library directly with &lt;script&gt; tag</h3>
+<script src="../sentience.min.js"></script>
+<script>
+
+    //replace console.log with document.write to make the behavior visible
+    console.log = (m) => {
+        document.write(`${m}<br>`);
+    };
+
+    //(2-4) for browser
+    const tom = new Tom();
+    console.log(tom.sayHello());
+
+</script>
+</body>
+</html>
