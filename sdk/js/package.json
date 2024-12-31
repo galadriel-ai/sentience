@@ -1,6 +1,6 @@
 {
-  "name": "js",
-  "version": "1.0.0",
+  "name": "sentience",
+  "version": "0.0.1",
   "main": "sentience.min.js",
   "scripts": {
     "build:bundlejs:prd": "webpack --config webpack.config.build-lib.js --mode production",
