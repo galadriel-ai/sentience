@@ -48,3 +48,197 @@ describe('verifySignature', () => {
         expect(Sentience.verifySignature(EXAMPLE_VALID)).toBe(true);
     })
 });
+
+describe('Sentience.getHistory', () => {
+    beforeEach(() => {
+        // Mock global fetch before each test
+        global.fetch = jest.fn();
+    });
+
+    afterEach(() => {
+        // Reset all mocks after each test to ensure a clean slate
+        jest.resetAllMocks();
+    });
+
+    it('should call fetch with limit=100 if limit is undefined', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        global.fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({data: []}),
+        });
+
+        // Act
+        await Sentience.getHistory(mockApiKey);
+
+        // Assert
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch).toHaveBeenCalledWith(
+            'https://api.galadriel.com/v1/verified/chat/completions?limit=100',
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+    });
+
+    it('should call fetch with limit=100 if limit is 0 or negative', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({data: []}),
+        });
+
+        // Act
+        await Sentience.getHistory(mockApiKey, 0);
+        await Sentience.getHistory(mockApiKey, -5);
+
+        // Assert
+        expect(global.fetch).toHaveBeenNthCalledWith(
+            1,
+            'https://api.galadriel.com/v1/verified/chat/completions?limit=100',
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+        expect(global.fetch).toHaveBeenNthCalledWith(
+            2,
+            'https://api.galadriel.com/v1/verified/chat/completions?limit=100',
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+    });
+
+    it('should call fetch with provided limit if limit is a positive number', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        const mockLimit = 50;
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({data: []}),
+        });
+
+        // Act
+        await Sentience.getHistory(mockApiKey, mockLimit);
+
+        // Assert
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch).toHaveBeenCalledWith(
+            `https://api.galadriel.com/v1/verified/chat/completions?limit=${mockLimit}`,
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+    });
+
+    it('should return JSON data when response is ok', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        const mockResponse = {data: ['item1', 'item2']};
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: async () => mockResponse,
+        });
+
+        // Act
+        const result = await Sentience.getHistory(mockApiKey, 20);
+
+        // Assert
+        expect(result).toEqual(mockResponse);
+    });
+
+    it('should throw an error when response is not ok', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        global.fetch.mockResolvedValue({
+            ok: false,
+            status: 404,
+            json: async () => ({}),
+        });
+
+        // Act & Assert
+        await expect(Sentience.getHistory(mockApiKey, 20)).rejects.toThrow(
+            'HTTP error! Status: 404'
+        );
+    });
+
+    it('should call fetch with cursor if cursor is defined', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        global.fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({data: []}),
+        });
+
+        // Act
+        await Sentience.getHistory(mockApiKey, 100, "mockCursor");
+
+        // Assert
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch).toHaveBeenCalledWith(
+            'https://api.galadriel.com/v1/verified/chat/completions?limit=100&cursor=mockCursor',
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+    });
+
+});
+
+describe('Sentience.getByHash', () => {
+    beforeEach(() => {
+        // Mock global fetch before each test
+        global.fetch = jest.fn();
+    });
+
+    afterEach(() => {
+        // Reset all mocks after each test to ensure a clean slate
+        jest.resetAllMocks();
+    });
+
+    it('should call fetch with correct url and hash', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        global.fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({data: []}),
+        });
+
+        // Act
+        await Sentience.getByHash(mockApiKey, "mockHash");
+
+        // Assert
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch).toHaveBeenCalledWith(
+            'https://api.galadriel.com/v1/verified/chat/completions/mockHash',
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+    });
+});
