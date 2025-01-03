@@ -13,9 +13,9 @@ Sentience enables developers to build autonomous, fully on-chain verifiable AI a
           alt="follow on Twitter"></a>
   <br>
   <a href="#quickstart">Quickstart</a> |
-  <a href="#overview">Overview</a> |
+  <a href="#how-it-works">How it works</a> |
   <a href="#features">Features</a> |
-  <a href="#repository-structure">Repository Structure</a> |
+  <a href="#roadmap">Roadmap</a> |
   <a href="#getting-help">Help</a> |
   <a href="https://docs.galadriel.com/">Docs</a>
 </p>
