@@ -34,16 +34,19 @@ export default class Sentience {
      * @param {string} apiKey - Galadriel API Key
      * @param {number} limit - how many items to return
      * @param {string} cursor - pagination cursor
+     * @param {string} filter - either "mine" or "all" to filter out results
      * @returns dict
      */
-    // TODO: also filter!
-    static getHistory(apiKey, limit, cursor) {
+    static getHistory(apiKey, limit, cursor, filter) {
         if (limit === undefined || limit === null || limit === 0 || limit < 0) {
             limit = 100;
         }
         let url = 'https://api.galadriel.com/v1/verified/chat/completions?limit=' + limit
         if (cursor) {
             url = url + "&cursor=" + cursor
+        }
+        if (filter && (filter === "mine" || filter === "all")) {
+            url = url + "&filter=" + filter
         }
 
         return fetch(url, {

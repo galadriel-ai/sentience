@@ -148,6 +148,84 @@ describe('Sentience.getHistory', () => {
         );
     });
 
+    it('should call fetch without invalid filter', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        const mockLimit = 50;
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({data: []}),
+        });
+
+        // Act
+        await Sentience.getHistory(mockApiKey, mockLimit, null, "invalidFilter");
+
+        // Assert
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch).toHaveBeenCalledWith(
+            `https://api.galadriel.com/v1/verified/chat/completions?limit=${mockLimit}`,
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+    });
+
+    it('should call fetch with provided filter mine', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        const mockLimit = 50;
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({data: []}),
+        });
+
+        // Act
+        await Sentience.getHistory(mockApiKey, mockLimit, null, "mine");
+
+        // Assert
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch).toHaveBeenCalledWith(
+            `https://api.galadriel.com/v1/verified/chat/completions?limit=${mockLimit}&filter=mine`,
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+    });
+
+    it('should call fetch with provided filter all', async () => {
+        // Arrange
+        const mockApiKey = 'test-api-key';
+        const mockLimit = 50;
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({data: []}),
+        });
+
+        // Act
+        await Sentience.getHistory(mockApiKey, mockLimit, null, "all");
+
+        // Assert
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch).toHaveBeenCalledWith(
+            `https://api.galadriel.com/v1/verified/chat/completions?limit=${mockLimit}&filter=all`,
+            expect.objectContaining({
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${mockApiKey}`,
+                },
+            })
+        );
+    });
+
     it('should return JSON data when response is ok', async () => {
         // Arrange
         const mockApiKey = 'test-api-key';
