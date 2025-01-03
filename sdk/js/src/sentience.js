@@ -27,6 +27,68 @@ export default class Sentience {
             return false;
         }
     }
+
+    /**
+     * Fetches all previous verified inference calls
+     *
+     * @param {string} apiKey - Galadriel API Key
+     * @param {number} limit - how many items to return
+     * @param {string} cursor - pagination cursor
+     * @param {string} filter - either "mine" or "all" to filter out results
+     * @returns dict
+     */
+    static getHistory(apiKey, limit, cursor, filter) {
+        if (limit === undefined || limit === null || limit === 0 || limit < 0) {
+            limit = 100;
+        }
+        let url = 'https://api.galadriel.com/v1/verified/chat/completions?limit=' + limit
+        if (cursor) {
+            url = url + "&cursor=" + cursor
+        }
+        if (filter && (filter === "mine" || filter === "all")) {
+            url = url + "&filter=" + filter
+        }
+
+        return fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + apiKey,
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-OK responses
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+    }
+
+    /**
+     * Fetches verified inference by it's hash
+     *
+     * @param {string} apiKey - Galadriel API Key
+     * @param {string} hash - the hash of the verified inference call
+     * @returns dict
+     */
+    static getByHash(apiKey, hash) {
+        let url = 'https://api.galadriel.com/v1/verified/chat/completions/' + hash
+        return fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + apiKey,
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-OK responses
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+    }
 }
 
 /**
