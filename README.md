@@ -50,12 +50,12 @@ import sentience
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="<https://api.galadriel.com/v1/verified>",
+    base_url="https://api.galadriel.com/v1/verified",
     api_key="Bearer GALADRIEL_API_KEY",
 )
 
 completion = client.chat.completions.create(
-    model="gpt-4o", // also works with finetuned OpenAI models
+    model="gpt-4o",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "Hello!"},
